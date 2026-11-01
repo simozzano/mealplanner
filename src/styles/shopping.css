@@ -1,0 +1,27 @@
+.sp-bar { display: grid; gap: .5rem; margin: .5rem 0 1rem; }
+.sp-bar-row { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+.sp-bar select, .sp-bar button { padding: .5rem .7rem; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+.sp-bar .sp-btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+.sp-group { margin-bottom: 1.25rem; }
+.sp-group h2 { font-size: 1rem; margin: 0 0 .4rem; color: var(--muted); }
+.sp-list { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
+.sp-item { display: flex; align-items: center; gap: .6rem; padding: .6rem .75rem; border-bottom: 1px solid var(--border); }
+.sp-item:last-child { border-bottom: 0; }
+.sp-item.done .sp-name { text-decoration: line-through; color: var(--muted); }
+.sp-check { width: 1.4rem; height: 1.4rem; flex: none; accent-color: var(--primary); }
+.sp-emoji { font-size: 1.4rem; flex: none; }
+.sp-main { flex: 1; min-width: 0; background: none; border: 0; padding: 0; text-align: left; color: inherit; }
+.sp-name { font-weight: 600; }
+.sp-sub { font-size: .8rem; color: var(--muted); }
+.sp-qty { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sp-del { background: none; border: 0; font-size: 1.1rem; padding: .4rem; color: var(--muted); }
+.sp-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 50; display: flex; align-items: flex-end; justify-content: center; }
+.sp-dialog { background: var(--surface); width: 100%; max-width: 480px; max-height: 92vh; overflow: auto; border-radius: 14px 14px 0 0; padding: 1rem; display: grid; gap: .7rem; }
+@media (min-width: 768px) { .sp-overlay { align-items: center; } .sp-dialog { border-radius: 14px; } }
+.sp-dialog h2 { margin: 0; font-size: 1.15rem; }
+.sp-dialog label { display: grid; gap: .25rem; font-size: .85rem; color: var(--muted); }
+.sp-dialog input, .sp-dialog select { font: inherit; font-size: 16px; padding: .55rem; border: 1px solid var(--border); border-radius: 8px; color: var(--text); background: #fff; }
+.sp-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+.sp-actions { display: flex; gap: .5rem; justify-content: flex-end; margin-top: .3rem; }
+.sp-actions button { padding: .55rem 1rem; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); }
+.sp-actions .sp-btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }

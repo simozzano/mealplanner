@@ -83,6 +83,11 @@ export const mockSource = {
     return { categorie, ingredienti, supermercati, tipiPasto };
   },
 
+  /** Mock: le foto restano dataURL dentro localStorage. */
+  async uploadPhoto(dataUrl) {
+    return dataUrl;
+  },
+
   /** Cancella le modifiche locali e ripristina i dati del file xlsx. */
   reset() {
     localStorage.removeItem(STORE_KEY);

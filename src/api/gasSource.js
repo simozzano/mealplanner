@@ -33,5 +33,7 @@ export function createGasSource(token) {
     update: (entity, id, data) => call('update', { entity, id, data }),
     delete: (entity, id) => call('delete', { entity, id }).then(() => undefined),
     loadSettings: () => call('getSettings'),
+    /** Carica un dataURL su Drive e restituisce l'URL pubblico (sezione Ricette). */
+    uploadPhoto: (dataUrl) => call('uploadPhoto', { dataUrl }),
   };
 }

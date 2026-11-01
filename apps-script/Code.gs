@@ -35,6 +35,7 @@ function doPost(e) {
     }
 
     switch (req.action) {
+      case 'uploadPhoto': return json_({ ok: true, data: uploadPhoto_(req.dataUrl) });
       case 'getSettings': return json_({ ok: true, data: getSettings_() });
       case 'list':   return json_({ ok: true, data: list_(req.entity) });
       case 'create': return json_({ ok: true, data: create_(req.entity, req.data) });
@@ -144,4 +145,16 @@ function getSettings_() {
   };
 }
 
-// TODO (sezione Ricette): upload foto su Drive (action 'uploadPhoto').
+// ---------- Foto ricette (Drive) ----------
+
+// Salva un dataURL (image/jpeg) in una cartella Drive e restituisce un URL visualizzabile.
+function uploadPhoto_(dataUrl) {
+  var m = /^data:(image\/[a-z+]+);base64,(.+)$/.exec(dataUrl || '');
+  if (!m) throw new Error('Foto non valida');
+  var folders = DriveApp.getFoldersByName('MealPlanner Foto');
+  var folder = folders.hasNext() ? folders.next() : DriveApp.createFolder('MealPlanner Foto');
+  var blob = Utilities.newBlob(Utilities.base64Decode(m[2]), m[1], 'foto-' + Date.now() + '.jpg');
+  var file = folder.createFile(blob);
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  return 'https://drive.google.com/thumbnail?id=' + file.getId() + '&sz=w1024';
+}

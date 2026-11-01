@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "mock:generate": "node scripts/generate-mock.mjs"
+    "mock:generate": "node scripts/generate-mock.mjs",
+    "test": "vitest run"
   },
   "dependencies": {
     "preact": "^10.22.0",
@@ -15,6 +16,7 @@
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.8.2",
-    "vite": "^5.4.0"
+    "vite": "^5.4.0",
+    "vitest": "^3.2.7"
   }
 }

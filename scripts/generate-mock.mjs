@@ -44,9 +44,9 @@ const tipiPasto = [
 ];
 
 const ricette = [
-  { id: 'r1', titolo: 'Spaghetti al pomodoro', tipo: 'Primo', porzioni: 2, procedimento: "Soffriggere aglio nell'olio.\nAggiungere la passata e cuocere 15 minuti.\nCuocere gli spaghetti e condire con basilico.", foto: '', fonte: '' },
-  { id: 'r2', titolo: 'Insalata di pollo', tipo: 'Secondo', porzioni: 2, procedimento: 'Grigliare il pollo.\nTagliare insalata e pomodori.\nCondire con olio, sale e limone.', foto: '', fonte: '' },
-  { id: 'r3', titolo: 'Pancake alle banane', tipo: 'Colazione', porzioni: 4, procedimento: "Schiacciare le banane.\nMescolare con uova, latte e farina.\nCuocere in padella con un po' di burro.", foto: '', fonte: '' },
+  { id: 'r1', titolo: 'Spaghetti al pomodoro', tipo: 'Primo', porzioni: 2, procedimento: "Soffriggere aglio nell'olio.\nAggiungere la passata e cuocere 15 minuti.\nCuocere gli spaghetti e condire con basilico.", foto: '', fonte: '', fotoStep: '' },
+  { id: 'r2', titolo: 'Insalata di pollo', tipo: 'Secondo', porzioni: 2, procedimento: 'Grigliare il pollo.\nTagliare insalata e pomodori.\nCondire con olio, sale e limone.', foto: '', fonte: '', fotoStep: '' },
+  { id: 'r3', titolo: 'Pancake alle banane', tipo: 'Colazione', porzioni: 4, procedimento: "Schiacciare le banane.\nMescolare con uova, latte e farina.\nCuocere in padella con un po' di burro.", foto: '', fonte: '', fotoStep: '' },
 ];
 
 const ingRicetta = [
@@ -56,10 +56,18 @@ const ingRicetta = [
   ['r2', 'Limone', 1, 'num.'], ['r2', "Olio d'oliva", 15, 'ml'],
   ['r3', 'Banane', 2, 'num.'], ['r3', 'Uova', 2, 'num.'], ['r3', 'Latte', 200, 'ml'],
   ['r3', 'Farina', 200, 'gr'], ['r3', 'Burro', 20, 'gr'],
-].map(([ricettaId, ingrediente, quantita, unita], i) => ({ id: 'i' + (i + 1), ricettaId, ingrediente, quantita, unita }));
+].map(([ricettaId, ingrediente, quantita, unita], i) => ({ id: 'i' + (i + 1), ricettaId, ingrediente, quantita, unita, nota: '' }));
 
 // Fogli vuoti: l'header deve esistere comunque
-const spesaHeader = ['id', 'nome', 'categoria', 'quantita', 'unita', 'nota', 'supermercato', 'acquistato', 'origine'];
+const spesaHeader = ['id', 'nome', 'categoria', 'quantita', 'unita', 'nota', 'supermercato', 'acquistato', 'origine', 'contributi'];
+const spesa = [
+  ['s1', 'Latte', 'Latticini e uova', 2, 'lt', 'intero', 'Coop', false],
+  ['s2', 'Pomodori', 'Frutta e verdura', 500, 'gr', '', 'Esselunga', false],
+  ['s3', 'Pane', 'Pane e pasta', 1, 'num.', '', '', true],
+].map(([id, nome, categoria, quantita, unita, nota, supermercato, acquistato]) => ({
+  id, nome, categoria, quantita, unita, nota, supermercato, acquistato, origine: '',
+  contributi: JSON.stringify({ manuale: quantita }),
+}));
 const plannerHeader = ['id', 'data', 'pasto', 'ricettaId', 'persone'];
 
 const wb = XLSX.utils.book_new();
@@ -68,7 +76,7 @@ const add = (name, rows, header) =>
 
 add('Ricette', ricette);
 add('Ingredienti_Ricetta', ingRicetta);
-add('Spesa', [], spesaHeader);
+add('Spesa', spesa, spesaHeader);
 add('Planner', [], plannerHeader);
 add('Impostazioni_Categorie', categorie);
 add('Impostazioni_Ingredienti', ingredienti);
