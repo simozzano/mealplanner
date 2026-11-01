@@ -6,4 +6,3 @@ export const MOCK_TOKEN = 'mock';
 
 // Chiave localStorage della sessione
 export const SESSION_KEY = 'mp_session';
-
