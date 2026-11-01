@@ -1,0 +1,20 @@
+{
+  "name": "zanucci-mealplanner",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "mock:generate": "node scripts/generate-mock.mjs"
+  },
+  "dependencies": {
+    "preact": "^10.22.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.8.2",
+    "vite": "^5.4.0"
+  }
+}
