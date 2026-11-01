@@ -81,6 +81,39 @@ export async function getRecipeList(source) {
   return rows.map(normRecipe).sort((a, b) => String(a.titolo).localeCompare(String(b.titolo), 'it'));
 }
 
+/** Indice ricettaId -> [nomi ingredienti in minuscolo], per la ricerca per ingredienti. */
+export async function getIngredientIndex(source) {
+  const ings = await source.list('recipeIngredients');
+  const index = {};
+  for (const i of ings) {
+    const name = String(normIng(i).nome || '').trim().toLowerCase();
+    if (name) (index[String(i.ricettaId)] ||= []).push(name);
+  }
+  return index;
+}
+
+const termMatches = (name, term) =>
+  name.includes(term) || (name.length >= 3 && term.includes(name));
+
+/**
+ * Filtra per titolo (`q`) e/o per ingredienti disponibili (`terms`).
+ * Ritorna [{recipe, matched, total}]; con `terms` esclude chi non ne ha nessuno
+ * e ordina per ingredienti corrispondenti decrescenti.
+ */
+export function filterRecipes(recipes, index, { q = '', terms = [] } = {}) {
+  const query = q.trim().toLowerCase();
+  const ts = terms.map((t) => t.trim().toLowerCase()).filter(Boolean);
+  const items = (recipes || [])
+    .filter((r) => !query || String(r.titolo).toLowerCase().includes(query))
+    .map((recipe) => {
+      const names = index?.[String(recipe.id)] || [];
+      const matched = ts.length ? ts.filter((t) => names.some((n) => termMatches(n, t))).length : 0;
+      return { recipe, matched, total: names.length };
+    });
+  if (!ts.length) return items;
+  return items.filter((x) => x.matched > 0).sort((a, b) => b.matched - a.matched || a.total - b.total);
+}
+
 export async function getRecipeWithIngredients(source, recipeId) {
   const [recipes, ings] = await Promise.all([source.list('recipes'), source.list('recipeIngredients')]);
   const r = recipes.find((x) => String(x.id) === String(recipeId));

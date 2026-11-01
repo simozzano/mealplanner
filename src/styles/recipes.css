@@ -84,3 +84,4 @@ textarea.rc-input { resize: vertical; }
   background: var(--bg); padding: .5rem 0;
 }
 @media (min-width: 700px) { .rc-sticky { bottom: 0; } }
+.rc-card-src { font-size: .72rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

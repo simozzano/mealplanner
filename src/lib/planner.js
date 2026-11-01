@@ -44,7 +44,54 @@ export function shiftWeek(date, delta) {
   return addDays(startOfWeek(date), delta * 7);
 }
 
-export const originOf = (plannerId) => `planner:${plannerId}`;
+export const VIEWS = [
+  { key: 'settimana', label: 'Settimana' },
+  { key: 'quindicina', label: 'Quindicina' },
+  { key: 'mese', label: 'Mese' },
+];
+
+/**
+ * Giorni del periodo contenente `anchor`. Ritorna { days: [iso|null], first, last }.
+ * settimana = 7 giorni da lunedì; quindicina = 14 giorni da lunedì;
+ * mese = mese di calendario, con `null` come riempimento iniziale per allinearsi al lunedì.
+ */
+export function periodDays(anchor, view) {
+  if (view === 'mese') {
+    const first = new Date(anchor.getFullYear(), anchor.getMonth(), 1);
+    const n = new Date(anchor.getFullYear(), anchor.getMonth() + 1, 0).getDate();
+    const pad0 = (first.getDay() + 6) % 7;
+    const days = [...Array(pad0).fill(null), ...Array.from({ length: n }, (_, i) => toISO(addDays(first, i)))];
+    return { days, first: days[pad0], last: days[days.length - 1] };
+  }
+  const start = startOfWeek(anchor);
+  const n = view === 'quindicina' ? 14 : 7;
+  const days = Array.from({ length: n }, (_, i) => toISO(addDays(start, i)));
+  return { days, first: days[0], last: days[n - 1] };
+}
+
+/** Sposta l'ancora di un periodo (settimana, 2 settimane o mese). */
+export function shiftPeriod(anchor, view, delta) {
+  if (view === 'mese') return new Date(anchor.getFullYear(), anchor.getMonth() + delta, 1);
+  return addDays(startOfWeek(anchor), delta * (view === 'quindicina' ? 14 : 7));
+}
+
+/** Una giornata saltata è una riga Planner con pasto = 'saltato' (nessuna ricetta, nessun ingrediente). */
+export const SKIP = 'saltato';
+
+/** Set delle date ISO che hanno almeno un pasto (esclusi i giorni saltati). */
+export const datesWithMeals = (rows) => new Set(rows.filter((r) => r.pasto !== SKIP).map(rowDate));
+
+/** Set delle date ISO segnate come saltate. */
+export const datesSkipped = (rows) => new Set(rows.filter((r) => r.pasto === SKIP).map(rowDate));
+
+/** Segna o rimuove il "salta la giornata" per `iso`. */
+export async function setSkipped(source, rows, iso, skipped) {
+  const marks = rows.filter((r) => r.pasto === SKIP && rowDate(r) === iso);
+  if (skipped && !marks.length) await source.create('planner', { data: iso, pasto: SKIP, ricettaId: '', persone: '' });
+  if (!skipped) for (const m of marks) await source.delete('planner', m.id);
+}
+
+export const originOf =(plannerId) => `planner:${plannerId}`;
 
 /** Normalizza il valore data di una riga (il foglio potrebbe restituire Date o stringa). */
 export function rowDate(row) {

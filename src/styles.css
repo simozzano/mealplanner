@@ -54,7 +54,8 @@ button { font: inherit; cursor: pointer; }
   color: var(--muted); text-decoration: none; font-size: .7rem;
 }
 .nav-item.active { color: var(--primary); font-weight: 600; }
-.nav-icon { font-size: 1.4rem; line-height: 1; }
+.nav-icon { display: grid; line-height: 1; }
+.nav-icon svg { width: 1.5rem; height: 1.5rem; }
 .nav-label .full { display: none; }
 /* Su mobile Esci/Reset stanno in alto a destra */
 .nav-footer {
@@ -82,7 +83,7 @@ button { font: inherit; cursor: pointer; }
     height: auto; padding: .65rem .75rem; border-radius: 8px; font-size: 1rem;
   }
   .nav-item.active { background: #e6f4ec; }
-  .nav-icon { font-size: 1.2rem; }
+  .nav-icon svg { width: 1.3rem; height: 1.3rem; }
   .nav-label .full { display: inline; }
   .nav-label .short { display: none; }
   .nav-footer { position: static; margin-top: auto; flex-direction: column; }

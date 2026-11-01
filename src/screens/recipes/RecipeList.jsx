@@ -1,4 +1,7 @@
-import { useState } from 'preact/hooks';
+import { useState, useEffect } from 'preact/hooks';
+import { useApp } from '../../context.jsx';
+import { getIngredientIndex, filterRecipes } from '../../lib/recipes.js';
+import { RecipeSearch, EMPTY_SEARCH, matchLabel } from '../../components/RecipeSearch.jsx';
 
 export function TypeBadge({ tipo, tipiPasto }) {
   if (!tipo) return null;
@@ -7,14 +10,14 @@ export function TypeBadge({ tipo, tipiPasto }) {
 }
 
 export function RecipeList({ recipes, tipiPasto, onOpen, onNew }) {
-  const [q, setQ] = useState('');
+  const { source, settings } = useApp();
+  const [search, setSearch] = useState(EMPTY_SEARCH);
   const [tipo, setTipo] = useState('');
+  const [index, setIndex] = useState({});
+  useEffect(() => { getIngredientIndex(source).then(setIndex).catch(() => {}); }, [source, recipes]);
 
-  const filtered = (recipes || []).filter(
-    (r) =>
-      (!tipo || r.tipo === tipo) &&
-      (!q.trim() || String(r.titolo).toLowerCase().includes(q.trim().toLowerCase())),
-  );
+  const filtered = filterRecipes(recipes, index, search.mode === 'nome' ? { q: search.q } : { terms: search.terms })
+    .filter((x) => !tipo || x.recipe.tipo === tipo);
 
   return (
     <>
@@ -22,13 +25,7 @@ export function RecipeList({ recipes, tipiPasto, onOpen, onNew }) {
         <h1>Ricette</h1>
         <button class="rc-btn rc-primary" onClick={onNew}>+ Nuova</button>
       </div>
-      <input
-        class="rc-input"
-        type="search"
-        placeholder="Cerca ricetta…"
-        value={q}
-        onInput={(e) => setQ(e.currentTarget.value)}
-      />
+      <RecipeSearch value={search} onChange={setSearch} suggestions={settings.ingredienti.map((i) => i.nome)} />
       <div class="rc-filters">
         <button class={`rc-chip ${!tipo ? 'on' : ''}`} onClick={() => setTipo('')}>Tutte</button>
         {(tipiPasto || []).map((t) => (
@@ -45,19 +42,25 @@ export function RecipeList({ recipes, tipiPasto, onOpen, onNew }) {
       {recipes === null && <p class="muted">Caricamento…</p>}
       {recipes && !filtered.length && <p class="muted">Nessuna ricetta trovata.</p>}
       <ul class="rc-list">
-        {filtered.map((r) => (
-          <li key={r.id}>
-            <button class="rc-card" onClick={() => onOpen(r.id)}>
-              <div class="rc-thumb">
-                {r.foto ? <img src={r.foto} alt="" loading="lazy" /> : <span>🍽️</span>}
-              </div>
-              <div class="rc-card-body">
-                <strong>{r.titolo}</strong>
-                <TypeBadge tipo={r.tipo} tipiPasto={tipiPasto} />
-              </div>
-            </button>
-          </li>
-        ))}
+        {filtered.map((item) => {
+          const r = item.recipe;
+          const ml = matchLabel(item, search);
+          return (
+            <li key={r.id}>
+              <button class="rc-card" onClick={() => onOpen(r.id)}>
+                <div class="rc-thumb">
+                  {r.foto ? <img src={r.foto} alt="" loading="lazy" /> : <span>🍽️</span>}
+                </div>
+                <div class="rc-card-body">
+                  <strong>{r.titolo}</strong>
+                  <TypeBadge tipo={r.tipo} tipiPasto={tipiPasto} />
+                  {r.fonte && <small class="rc-card-src">{r.fonte}</small>}
+                  {ml && <small class="rc-card-src">{ml}</small>}
+                </div>
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </>
   );
